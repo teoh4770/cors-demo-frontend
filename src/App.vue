@@ -7,7 +7,7 @@
   onMounted(async () => {
     try {
       // Make a get request to our Laravel API endpoint
-      const response = await axios.get('http://localhost:8080/api/greeting');
+      const response = await axios.get('http://localhost:8000/api/greeting');
 
       // Update the message with the data from the API
       message.value = response.data.message;
