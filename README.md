@@ -1,45 +1,72 @@
-# cors-demo-frontend
+Let's create the app that will talk to our API.
 
-This template should help get you started developing with Vue 3 in Vite.
+1. Create a New Vue Project
 
-## Recommended IDE Setup
+In a new terminal window (keep your Laravel server running!), navigate to your main development folder and run:
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+```Bash
 
-## Type Support for `.vue` Imports in TS
+# This will guide you through creating a new Vue 3 project
+npm create vue@latest
+When prompted, you can name it my-vue-app and choose the default settings (No to everything is fine for this simple example).
+```
+2. Install Dependencies
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
+Navigate into your new Vue project and install the dependencies, plus axios for making HTTP requests.
 
-## Customize configuration
+```Bash
 
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
-pnpm install
+cd my-vue-app
+npm install
+npm install axios
 ```
 
-### Compile and Hot-Reload for Development
+3. Create the Vue Component
 
-```sh
-pnpm dev
-```
+Open src/App.vue and replace its entire content with the following code. This code will fetch the message from our Laravel API when the component is created and display it.
 
-### Type-Check, Compile and Minify for Production
+```Vue
+<script setup>
+import { ref, onMounted } from 'vue';
+import axios from 'axios';
 
-```sh
-pnpm build
-```
+// A reactive variable to store the message from the API
+const message = ref('Loading...');
 
-### Run Unit Tests with [Vitest](https://vitest.dev/)
+// This function will be called when the component is mounted
+onMounted(async () => {
+  try {
+    // Make a GET request to our Laravel API endpoint
+    const response = await axios.get('http://localhost:8080/api/greeting');
 
-```sh
-pnpm test:unit
-```
+    // Update the message with the data from the API
+    message.value = response.data.message;
 
-### Lint with [ESLint](https://eslint.org/)
+  } catch (error) {
+    // If an error occurs (like a CORS error or network issue), display it
+    console.error("There was an error fetching the data:", error);
+    message.value = 'Failed to load message from API. Is the Laravel server running?';
+  }
+});
+</script>
 
-```sh
-pnpm lint
+<template>
+  <main>
+    <h1>Vue + Laravel Demo</h1>
+    <p>
+      Message from API: <strong>{{ message }}</strong>
+    </p>
+  </main>
+</template>
+
+<style scoped>
+main {
+  font-family: sans-serif;
+  text-align: center;
+  margin-top: 50px;
+}
+strong {
+  color: #42b983; /* Vue Green */
+}
+</style>
 ```
